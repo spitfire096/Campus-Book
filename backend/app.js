@@ -38,7 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Serve static files (CSS, client-side JS)
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
 // Session configuration
 app.use(session({
