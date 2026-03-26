@@ -1,0 +1,10 @@
+//- views/error.pug
+
+extends layout
+
+block content
+  .error-page
+    .error-page__code 500
+    h1.error-page__title Server Error
+    p.error-page__msg #{message || 'Something went wrong. Please try again.'}
+    a.btn.btn--primary(href="/") Go Home

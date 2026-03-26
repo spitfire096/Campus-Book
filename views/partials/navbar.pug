@@ -1,0 +1,41 @@
+//- views/partials/navbar.pug
+//- Responsive navigation bar — shows different links based on user role
+
+nav.navbar
+  .navbar__inner
+    //- Logo / Brand
+    a.navbar__brand(href="/")
+      span.navbar__logo-icon ⬡
+      span.navbar__logo-text SmartCampus
+
+    //- Hamburger toggle (mobile)
+    button.navbar__toggle(aria-label="Toggle menu", id="navToggle")
+      span
+      span
+      span
+
+    //- Navigation Links
+    ul.navbar__links(id="navLinks")
+      li
+        a(href="/resources") Resources
+
+      if currentUser
+        li
+          a(href="/dashboard") Dashboard
+
+        if currentUser.role === 'admin'
+          li
+            a.navbar__admin-link(href="/admin") Admin Panel
+
+        li
+          a(href="/bookings/new") + Book Now
+
+        li.navbar__user
+          span.navbar__username Hello, #{currentUser.name.split(' ')[0]}
+          a.navbar__logout(href="/auth/logout") Sign Out
+
+      else
+        li
+          a(href="/auth/login") Sign In
+        li
+          a.btn.btn--nav(href="/auth/register") Get Started

@@ -1,0 +1,43 @@
+//- views/admin/users.pug
+
+extends ../layout
+
+block content
+  .container
+    .page-header
+      h1.page-header__title Manage Users
+      a.btn.btn--outline(href="/admin") ← Dashboard
+    p Total: #{users.length} user#{users.length !== 1 ? 's' : ''}
+
+    .table-wrap
+      table.data-table
+        thead
+          tr
+            th Name
+            th Email
+            th Role
+            th Student ID
+            th Joined
+            th Actions
+        tbody
+          each user in users
+            tr(class= user._id.toString() === currentUser._id.toString() ? 'table-row--self' : '')
+              td
+                strong #{user.name}
+                if user._id.toString() === currentUser._id.toString()
+                  span.badge.badge--self  (You)
+              td #{user.email}
+              td
+                span.badge(class= user.role === 'admin' ? 'badge--admin' : '') #{user.role}
+              td #{user.studentId || '—'}
+              td= new Date(user.createdAt).toLocaleDateString('en-CA')
+              td
+                if user._id.toString() !== currentUser._id.toString()
+                  form(action="/admin/users/" + user._id + "/delete", method="POST", class="inline-form")
+                    button.btn.btn--sm.btn--danger(
+                      type="submit",
+                      class="confirm-delete",
+                      data-name= user.name
+                    ) Delete
+                else
+                  span —

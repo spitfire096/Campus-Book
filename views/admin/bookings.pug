@@ -1,0 +1,56 @@
+//- views/admin/bookings.pug
+
+extends ../layout
+
+block content
+  .container
+    .page-header
+      h1.page-header__title All Bookings
+      a.btn.btn--outline(href="/admin") ← Dashboard
+    p Total: #{bookings.length} booking#{bookings.length !== 1 ? 's' : ''}
+
+    if bookings.length === 0
+      .empty-state
+        span.empty-state__icon 📅
+        p No bookings in the system yet.
+    else
+      .table-wrap
+        table.data-table
+          thead
+            tr
+              th User
+              th Resource
+              th Date
+              th Time
+              th Purpose
+              th Status
+              th Actions
+          tbody
+            each booking in bookings
+              tr
+                td
+                  if booking.user
+                    | #{booking.user.name}
+                    br
+                    small #{booking.user.email}
+                  else
+                    em Deleted User
+                td
+                  if booking.resource
+                    | #{booking.resource.name}
+                    br
+                    small 📍 #{booking.resource.location}
+                  else
+                    em Deleted Resource
+                td= new Date(booking.date).toLocaleDateString('en-CA')
+                td #{booking.startTime} – #{booking.endTime}
+                td #{booking.purpose || '—'}
+                td
+                  span.badge(class='badge--' + booking.status) #{booking.status}
+                td
+                  form(action="/bookings/" + booking._id + "/delete", method="POST", class="inline-form")
+                    button.btn.btn--sm.btn--danger(
+                      type="submit",
+                      class="confirm-delete",
+                      data-name="this booking"
+                    ) Delete

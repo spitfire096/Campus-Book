@@ -1,0 +1,92 @@
+//- views/auth/register.pug
+
+extends ../layout
+
+block content
+  .auth-page
+    .auth-card
+      .auth-card__header
+        a.auth-card__back(href="/") ← Back
+        h1.auth-card__title Create Account
+        p.auth-card__sub Join SmartCampus today
+
+      //- Server-side error list
+      if errors && errors.length > 0
+        .form-errors
+          each err in errors
+            p.form-error-item ✕ #{err}
+
+      form#registerForm.auth-form(action="/auth/register", method="POST", novalidate)
+
+        .form-group
+          label.form-label(for="name") Full Name
+          input.form-input#name(
+            type="text",
+            name="name",
+            id="name",
+            placeholder="e.g. Jane Smith",
+            value= formData.name || '',
+            autocomplete="name"
+          )
+          span.field-error#nameError
+
+        .form-group
+          label.form-label(for="email") Email Address
+          input.form-input#email(
+            type="email",
+            name="email",
+            id="email",
+            placeholder="you@example.com",
+            value= formData.email || '',
+            autocomplete="email"
+          )
+          span.field-error#emailError
+
+        .form-group
+          label.form-label(for="studentId") Student ID
+          input.form-input#studentId(
+            type="text",
+            name="studentId",
+            id="studentId",
+            placeholder="e.g. 041234567 (optional)",
+            value= formData.studentId || ''
+          )
+
+        .form-group
+          label.form-label(for="password") Password
+          .input-wrapper
+            input.form-input#password(
+              type="password",
+              name="password",
+              id="password",
+              placeholder="Minimum 6 characters",
+              autocomplete="new-password"
+            )
+            button.input-toggle(type="button", data-target="password", aria-label="Toggle password") 👁
+          span.field-error#passwordError
+          .password-strength#passwordStrength
+            .password-strength__bar
+              .password-strength__fill#strengthFill
+            span#strengthLabel
+
+        .form-group
+          label.form-label(for="confirmPassword") Confirm Password
+          .input-wrapper
+            input.form-input#confirmPassword(
+              type="password",
+              name="confirmPassword",
+              id="confirmPassword",
+              placeholder="Re-enter your password",
+              autocomplete="new-password"
+            )
+            button.input-toggle(type="button", data-target="confirmPassword", aria-label="Toggle password") 👁
+          span.field-error#confirmPasswordError
+
+        button.btn.btn--primary.btn--full(type="submit") Create Account
+
+      p.auth-card__switch
+        | Already have an account?
+        a(href="/auth/login")  Sign in here
+
+block scripts
+  script(src="/js/validate-register.js")

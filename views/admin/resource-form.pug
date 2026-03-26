@@ -1,0 +1,94 @@
+//- views/admin/resource-form.pug
+//- Reusable form for both creating and editing resources
+//- resource=null → create mode; resource=object → edit mode
+
+extends ../layout
+
+block content
+  .container
+    a.back-link(href="/admin/resources") ← Back to Resources
+
+    .form-page
+      .form-page__header
+        h1.form-page__title #{resource ? 'Edit Resource' : 'Add New Resource'}
+
+      if errors && errors.length > 0
+        .form-errors
+          each err in errors
+            p.form-error-item ✕ #{err}
+
+      - var action = resource ? '/admin/resources/' + resource._id + '/edit' : '/admin/resources'
+      form#resourceForm.form-card(action=action, method="POST", novalidate)
+
+        .form-row
+          .form-group
+            label.form-label(for="name") Resource Name *
+            input.form-input#name(
+              type="text",
+              name="name",
+              placeholder="e.g. Computer Lab B",
+              value= formData.name || (resource && resource.name) || ''
+            )
+            span.field-error#nameError
+
+          .form-group
+            label.form-label(for="category") Category *
+            select.form-input#category(name="category")
+              option(value="") — Select —
+              - var cats = ['room','lab','equipment','study-space']
+              each cat in cats
+                - var selectedCat = (formData.category || (resource && resource.category)) === cat
+                option(value=cat, selected=selectedCat) #{cat.charAt(0).toUpperCase() + cat.slice(1)}
+            span.field-error#categoryError
+
+        .form-row
+          .form-group
+            label.form-label(for="capacity") Capacity *
+            input.form-input#capacity(
+              type="number",
+              name="capacity",
+              min="1",
+              placeholder="e.g. 20",
+              value= formData.capacity || (resource && resource.capacity) || '1'
+            )
+            span.field-error#capacityError
+
+          .form-group
+            label.form-label(for="location") Location
+            input.form-input#location(
+              type="text",
+              name="location",
+              placeholder="e.g. Building C, Room 204",
+              value= formData.location || (resource && resource.location) || ''
+            )
+
+        .form-group
+          label.form-label(for="description") Description
+          textarea.form-input.form-input--textarea#description(
+            name="description",
+            rows="3",
+            placeholder="Describe what this resource offers..."
+          ) #{formData.description || (resource && resource.description) || ''}
+
+        .form-group
+          label.form-label(for="features") Features (one per line)
+          textarea.form-input.form-input--textarea#features(
+            name="features",
+            rows="4",
+            placeholder="Projector\nWhiteboard\nAir conditioning\nHDMI cable"
+          ) #{formData.features || (resource && resource.features ? resource.features.join('\n') : '')}
+
+        if resource
+          .form-group
+            label.form-label(for="isAvailable") Availability Status
+            select.form-input#isAvailable(name="isAvailable")
+              option(value="true",  selected=(resource.isAvailable === true))  Available
+              option(value="false", selected=(resource.isAvailable === false)) Unavailable
+
+        .form-actions
+          button.btn.btn--primary(type="submit")
+            = resource ? 'Save Changes' : 'Add Resource'
+          a.btn.btn--outline(href="/admin/resources") Cancel
+
+block scripts
+  script(src="/js/validate-resource.js")

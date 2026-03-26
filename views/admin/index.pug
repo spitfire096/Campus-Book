@@ -1,0 +1,83 @@
+//- views/admin/index.pug
+
+extends ../layout
+
+block content
+  .container
+    .page-header
+      h1.page-header__title Admin Panel
+      p.page-header__sub System overview and management
+
+    //- Quick Nav
+    .admin-nav
+      a.admin-nav__item(href="/admin/resources") 🏛️ Resources
+      a.admin-nav__item(href="/admin/bookings")  📅 Bookings
+      a.admin-nav__item(href="/admin/users")     👥 Users
+      a.admin-nav__item(href="/admin/resources/new") + Add Resource
+
+    //- Stats Cards
+    .stats-cards
+      .stats-card
+        span.stats-card__icon 👥
+        .stats-card__info
+          span.stats-card__num #{totalUsers}
+          span.stats-card__label Registered Users
+      .stats-card
+        span.stats-card__icon 🏛️
+        .stats-card__info
+          span.stats-card__num #{totalResources}
+          span.stats-card__label Total Resources
+      .stats-card
+        span.stats-card__icon 📅
+        .stats-card__info
+          span.stats-card__num #{totalBookings}
+          span.stats-card__label Total Bookings
+
+    //- Recent Bookings Table
+    section.dashboard-section
+      .dashboard-section__header
+        h2.dashboard-section__title Recent Bookings
+        a.btn.btn--sm.btn--outline(href="/admin/bookings") View All
+
+      if recentBookings.length === 0
+        .empty-state
+          p No bookings yet.
+      else
+        .table-wrap
+          table.data-table
+            thead
+              tr
+                th User
+                th Resource
+                th Date
+                th Time
+                th Status
+                th Actions
+            tbody
+              each booking in recentBookings
+                tr
+                  td
+                    if booking.user
+                      | #{booking.user.name}
+                      br
+                      small #{booking.user.email}
+                    else
+                      | Deleted User
+                  td
+                    if booking.resource
+                      | #{booking.resource.name}
+                      br
+                      small.badge #{booking.resource.category}
+                    else
+                      | Deleted Resource
+                  td= new Date(booking.date).toLocaleDateString('en-CA')
+                  td #{booking.startTime} – #{booking.endTime}
+                  td
+                    span.badge(class='badge--' + booking.status) #{booking.status}
+                  td
+                    form(action="/bookings/" + booking._id + "/delete", method="POST", class="inline-form")
+                      button.btn.btn--sm.btn--danger(
+                        type="submit",
+                        class="confirm-delete",
+                        data-name="this booking"
+                      ) Delete

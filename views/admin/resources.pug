@@ -1,0 +1,50 @@
+//- views/admin/resources.pug
+
+extends ../layout
+
+block content
+  .container
+    .page-header
+      h1.page-header__title Manage Resources
+      a.btn.btn--primary(href="/admin/resources/new") + Add New Resource
+      a.btn.btn--outline(href="/admin") ← Dashboard
+
+    if resources.length === 0
+      .empty-state
+        span.empty-state__icon 🏛️
+        p No resources added yet.
+        a.btn.btn--primary(href="/admin/resources/new") Add First Resource
+    else
+      .table-wrap
+        table.data-table
+          thead
+            tr
+              th Name
+              th Category
+              th Location
+              th Capacity
+              th Status
+              th Actions
+          tbody
+            each resource in resources
+              tr
+                td
+                  strong #{resource.name}
+                  if resource.description
+                    br
+                    small #{resource.description.substring(0,50)}#{resource.description.length > 50 ? '...' : ''}
+                td
+                  span.badge #{resource.category}
+                td #{resource.location}
+                td #{resource.capacity}
+                td
+                  span.badge(class=resource.isAvailable ? 'badge--available' : 'badge--unavailable')
+                    = resource.isAvailable ? 'Available' : 'Unavailable'
+                td.table-actions
+                  a.btn.btn--sm.btn--outline(href="/admin/resources/" + resource._id + "/edit") Edit
+                  form(action="/admin/resources/" + resource._id + "/delete", method="POST", class="inline-form")
+                    button.btn.btn--sm.btn--danger(
+                      type="submit",
+                      class="confirm-delete",
+                      data-name= resource.name
+                    ) Delete

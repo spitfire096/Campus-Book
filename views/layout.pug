@@ -1,0 +1,33 @@
+//- views/layout.pug
+//- Base layout shared by all pages
+
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{title} | SmartCampus
+    link(rel="stylesheet", href="/css/main.css")
+    link(rel="stylesheet", href="/css/components.css")
+    link(rel="preconnect", href="https://fonts.googleapis.com")
+    link(rel="preconnect", href="https://fonts.gstatic.com", crossorigin)
+    link(href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap", rel="stylesheet")
+
+  body
+    //- Navigation Bar
+    include partials/navbar
+
+    //- Flash Messages
+    include partials/flash
+
+    //- Main Content
+    main.main-content
+      block content
+
+    //- Footer
+    include partials/footer
+
+    //- Global client-side JS
+    script(src="/js/main.js")
+    //- Page-specific scripts injected by child templates
+    block scripts

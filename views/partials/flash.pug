@@ -1,0 +1,16 @@
+//- views/partials/flash.pug
+//- Renders success and error flash messages
+
+if successMessage && successMessage.length > 0
+  .flash.flash--success
+    each msg in successMessage
+      p.flash__text
+        span.flash__icon ✓
+        |  #{msg}
+
+if errorMessage && errorMessage.length > 0
+  .flash.flash--error
+    each msg in errorMessage
+      p.flash__text
+        span.flash__icon ✕
+        |  #{msg}

@@ -1,0 +1,86 @@
+//- views/home.pug
+
+extends layout
+
+block content
+  //- Hero Section
+  section.hero
+    .hero__content
+      h1.hero__title
+        | Book Campus
+        br
+        span.hero__title--accent Resources
+        |  Instantly
+      p.hero__subtitle
+        | Rooms, labs, and equipment — reserved in seconds.
+        | No queues. No waiting.
+      .hero__cta
+        if currentUser
+          a.btn.btn--primary(href="/bookings/new") Make a Booking
+          a.btn.btn--outline(href="/resources") Browse Resources
+        else
+          a.btn.btn--primary(href="/auth/register") Get Started Free
+          a.btn.btn--outline(href="/auth/login") Sign In
+
+    .hero__visual
+      .hero__cards
+        .hero__card
+          span.hero__card-icon 🏫
+          span Room 204
+        .hero__card.hero__card--active
+          span.hero__card-icon 🔬
+          span Lab A
+        .hero__card
+          span.hero__card-icon 💻
+          span Mac Lab
+
+  //- Stats Bar
+  section.stats-bar
+    .stats-bar__inner
+      .stat
+        span.stat__number 3+
+        span.stat__label Resource Types
+      .stat
+        span.stat__number 24/7
+        span.stat__label Access Booking
+      .stat
+        span.stat__number 100%
+        span.stat__label Real-Time
+
+  //- Featured Resources
+  if featuredResources && featuredResources.length > 0
+    section.section
+      .container
+        .section__header
+          h2.section__title Featured Resources
+          a.section__link(href="/resources") View All →
+
+        .resource-grid
+          each resource in featuredResources
+            .resource-card
+              .resource-card__category #{resource.category}
+              h3.resource-card__name #{resource.name}
+              p.resource-card__location 📍 #{resource.location}
+              p.resource-card__capacity 👥 Capacity: #{resource.capacity}
+              .resource-card__footer
+                span.badge(class=resource.isAvailable ? 'badge--available' : 'badge--unavailable')
+                  = resource.isAvailable ? 'Available' : 'Unavailable'
+                a.btn.btn--sm(href="/resources/" + resource._id) View
+
+  //- How It Works
+  section.section.section--alt
+    .container
+      h2.section__title How It Works
+      .steps
+        .step
+          .step__num 01
+          h3.step__title Create Account
+          p.step__desc Register with your college email in under a minute.
+        .step
+          .step__num 02
+          h3.step__title Find a Resource
+          p.step__desc Browse and filter rooms, labs, and equipment.
+        .step
+          .step__num 03
+          h3.step__title Make a Booking
+          p.step__desc Pick your date and time — instant confirmation.

@@ -1,0 +1,81 @@
+//- views/bookings/new.pug
+
+extends ../layout
+
+block content
+  .container
+    a.back-link(href="/resources") ← Back to Resources
+
+    .form-page
+      .form-page__header
+        h1.form-page__title New Booking
+        p.form-page__sub Reserve a campus resource
+
+      //- Server-side errors
+      if errors && errors.length > 0
+        .form-errors
+          each err in errors
+            p.form-error-item ✕ #{err}
+
+      form#bookingForm.form-card(action="/bookings", method="POST", novalidate)
+
+        .form-group
+          label.form-label(for="resourceId") Resource *
+          select.form-input#resourceId(name="resourceId", required)
+            option(value="") — Select a resource —
+            each r in resources
+              option(
+                value= r._id,
+                selected= (resource && resource._id.toString() === r._id.toString()) || (formData.resourceId === r._id.toString())
+              ) #{r.name} (#{r.category} · #{r.location})
+          span.field-error#resourceIdError
+
+        .form-row
+          .form-group
+            label.form-label(for="date") Date *
+            input.form-input#date(
+              type="date",
+              name="date",
+              id="date",
+              value= formData.date || '',
+              min= new Date().toISOString().split('T')[0]
+            )
+            span.field-error#dateError
+
+        .form-row
+          .form-group
+            label.form-label(for="startTime") Start Time *
+            select.form-input#startTime(name="startTime")
+              option(value="") — Select —
+              - var hours = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00']
+              each slot in hours
+                option(value=slot, selected=(formData.startTime === slot)) #{slot}
+            span.field-error#startTimeError
+
+          .form-group
+            label.form-label(for="endTime") End Time *
+            select.form-input#endTime(name="endTime")
+              option(value="") — Select —
+              each slot in hours
+                option(value=slot, selected=(formData.endTime === slot)) #{slot}
+            span.field-error#endTimeError
+
+        //- Live booked-slots display (populated via JS)
+        #bookedSlotsDisplay.booked-slots(style="display:none")
+          h4.booked-slots__title Already Booked
+          ul.booked-slots__list#bookedSlotsList
+
+        .form-group
+          label.form-label(for="purpose") Purpose (optional)
+          textarea.form-input.form-input--textarea#purpose(
+            name="purpose",
+            placeholder="e.g. Study group session, Project meeting...",
+            rows="3"
+          ) #{formData.purpose || ''}
+
+        .form-actions
+          button.btn.btn--primary(type="submit") Confirm Booking
+          a.btn.btn--outline(href="/resources") Cancel
+
+block scripts
+  script(src="/js/booking-form.js")

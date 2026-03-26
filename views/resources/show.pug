@@ -1,0 +1,57 @@
+//- views/resources/show.pug
+
+extends ../layout
+
+block content
+  .container
+    a.back-link(href="/resources") ← Back to Resources
+
+    .resource-detail
+      .resource-detail__header
+        .resource-detail__badge #{resource.category}
+        h1.resource-detail__title #{resource.name}
+        span.badge(class=resource.isAvailable ? 'badge--available' : 'badge--unavailable')
+          = resource.isAvailable ? '✓ Available' : '✕ Unavailable'
+
+      .resource-detail__body
+        .resource-detail__info
+          .info-grid
+            .info-item
+              span.info-item__label Location
+              span.info-item__value 📍 #{resource.location}
+            .info-item
+              span.info-item__label Capacity
+              span.info-item__value 👥 #{resource.capacity} #{resource.capacity === 1 ? 'person' : 'people'}
+            .info-item
+              span.info-item__label Category
+              span.info-item__value #{resource.category}
+
+          if resource.description
+            .resource-detail__desc
+              h3 About this Resource
+              p #{resource.description}
+
+          if resource.features && resource.features.length > 0
+            .resource-detail__features
+              h3 Features
+              .tag-list
+                each feature in resource.features
+                  span.tag #{feature}
+
+        .resource-detail__action
+          if resource.isAvailable
+            if currentUser
+              .action-card
+                h3.action-card__title Ready to Book?
+                p.action-card__sub Select your date and time below.
+                a.btn.btn--primary.btn--full(href="/bookings/new?resourceId=" + resource._id) Book This Resource
+            else
+              .action-card
+                h3.action-card__title Sign In to Book
+                p.action-card__sub Create an account or sign in to reserve this resource.
+                a.btn.btn--primary.btn--full(href="/auth/register") Get Started
+                a.btn.btn--outline.btn--full(href="/auth/login") Sign In
+          else
+            .action-card.action-card--unavailable
+              h3.action-card__title Currently Unavailable
+              p.action-card__sub This resource has been taken offline. Check back later.

@@ -1,0 +1,81 @@
+//- views/resources/index.pug
+
+extends ../layout
+
+block content
+  .container
+    .page-header
+      h1.page-header__title Campus Resources
+      p.page-header__sub Browse and filter available rooms, labs, and equipment
+
+    //- Search + Filter Form
+    form#searchForm.search-bar(action="/resources", method="GET")
+      .search-bar__input-wrap
+        input.search-bar__input(
+          type="text",
+          name="search",
+          id="searchInput",
+          placeholder="Search by name, description, or location...",
+          value= search || ''
+        )
+        button.btn.btn--primary(type="submit") Search
+
+      .search-bar__filters
+        .filter-group
+          label.filter-label(for="category") Category
+          select.form-input.form-input--sm#category(name="category")
+            option(value="all",         selected=(category === 'all'))   All Types
+            option(value="room",        selected=(category === 'room'))  Rooms
+            option(value="lab",         selected=(category === 'lab'))   Labs
+            option(value="equipment",   selected=(category === 'equipment')) Equipment
+            option(value="study-space", selected=(category === 'study-space')) Study Spaces
+
+        .filter-group
+          label.filter-label(for="available") Availability
+          select.form-input.form-input--sm#available(name="available")
+            option(value="",     selected=(!available))       All
+            option(value="true", selected=(available === 'true')) Available Only
+
+        button.btn.btn--outline.btn--sm(type="button", id="clearFilters") Clear
+
+    //- Results Count
+    .results-meta
+      p
+        strong #{resources.length}
+        |  resource#{resources.length !== 1 ? 's' : ''} found
+        if search
+          |  for "#{search}"
+
+    //- Resource Grid
+    if resources.length === 0
+      .empty-state
+        span.empty-state__icon 🔍
+        p No resources found matching your search.
+        a.btn.btn--outline(href="/resources") Clear Search
+    else
+      .resource-grid
+        each resource in resources
+          .resource-card
+            .resource-card__top
+              span.resource-card__category #{resource.category}
+              span.badge(class=resource.isAvailable ? 'badge--available' : 'badge--unavailable')
+                = resource.isAvailable ? 'Available' : 'Unavailable'
+            h3.resource-card__name #{resource.name}
+            if resource.description
+              p.resource-card__desc #{resource.description.substring(0, 80)}#{resource.description.length > 80 ? '...' : ''}
+            .resource-card__meta
+              span 📍 #{resource.location}
+              span 👥 #{resource.capacity} #{resource.capacity === 1 ? 'person' : 'people'}
+            if resource.features && resource.features.length > 0
+              .resource-card__features
+                each feature in resource.features.slice(0, 3)
+                  span.tag #{feature}
+            .resource-card__footer
+              a.btn.btn--sm.btn--outline(href="/resources/" + resource._id) Details
+              if currentUser
+                a.btn.btn--sm.btn--primary(href="/bookings/new?resourceId=" + resource._id) Book Now
+              else
+                a.btn.btn--sm(href="/auth/login") Login to Book
+
+block scripts
+  script(src="/js/search.js")

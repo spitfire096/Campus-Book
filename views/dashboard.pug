@@ -1,0 +1,86 @@
+//- views/dashboard.pug
+
+extends layout
+
+block content
+  .container
+    //- Dashboard Header
+    .page-header
+      h1.page-header__title Welcome back, #{currentUser.name.split(' ')[0]}!
+      p.page-header__sub
+        = currentUser.role === 'admin' ? '🔑 Administrator Account' : '🎓 Student Account'
+      a.btn.btn--primary(href="/bookings/new") + New Booking
+
+    //- Stats Cards
+    .stats-cards
+      .stats-card
+        span.stats-card__icon 📅
+        .stats-card__info
+          span.stats-card__num #{totalBookings}
+          span.stats-card__label Total Bookings
+      .stats-card
+        span.stats-card__icon 🔮
+        .stats-card__info
+          span.stats-card__num #{upcomingBookings.length}
+          span.stats-card__label Upcoming
+      .stats-card
+        span.stats-card__icon 🏛️
+        .stats-card__info
+          span.stats-card__num #{totalResources}
+          span.stats-card__label Available Resources
+
+    //- Upcoming Bookings
+    section.dashboard-section
+      h2.dashboard-section__title Upcoming Bookings
+      if upcomingBookings.length === 0
+        .empty-state
+          span.empty-state__icon 📭
+          p No upcoming bookings.
+          a.btn.btn--outline(href="/bookings/new") Book a Resource
+      else
+        .booking-list
+          each booking in upcomingBookings
+            .booking-card
+              .booking-card__resource
+                span.booking-card__icon
+                  = booking.resource ? booking.resource.category[0].toUpperCase() : '?'
+                .booking-card__details
+                  h3.booking-card__name
+                    = booking.resource ? booking.resource.name : 'Unknown Resource'
+                  p.booking-card__meta
+                    = booking.resource ? '📍 ' + booking.resource.location : ''
+              .booking-card__time
+                p.booking-card__date
+                  = new Date(booking.date).toLocaleDateString('en-CA', {weekday:'short', month:'short', day:'numeric'})
+                p.booking-card__slot #{booking.startTime} – #{booking.endTime}
+              .booking-card__status
+                span.badge(class='badge--' + booking.status) #{booking.status}
+              .booking-card__actions
+                a.btn.btn--sm.btn--outline(href="/bookings/" + booking._id + "/edit") Edit
+                form(action="/bookings/" + booking._id + "/delete", method="POST", class="inline-form")
+                  button.btn.btn--sm.btn--danger(
+                    type="submit",
+                    class="confirm-delete",
+                    data-name="this booking"
+                  ) Cancel
+
+    //- Past Bookings
+    if pastBookings.length > 0
+      section.dashboard-section
+        h2.dashboard-section__title Past Bookings
+        .booking-list.booking-list--past
+          each booking in pastBookings
+            .booking-card.booking-card--past
+              .booking-card__resource
+                .booking-card__details
+                  h3.booking-card__name
+                    = booking.resource ? booking.resource.name : 'Unknown Resource'
+                  p.booking-card__meta
+                    = new Date(booking.date).toLocaleDateString('en-CA', {month:'short', day:'numeric', year:'numeric'})
+              .booking-card__time
+                p.booking-card__slot #{booking.startTime} – #{booking.endTime}
+              .booking-card__status
+                span.badge.badge--past Completed
+
+block scripts
+  script(src="/js/dashboard.js")
