@@ -1,0 +1,3 @@
+$kind: collection
+name: '4. Admin'
+description: 'Admin-only routes. Requires login with an admin account.'

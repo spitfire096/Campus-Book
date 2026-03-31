@@ -321,13 +321,6 @@ small { font-size: 0.8rem; color: var(--color-text-muted); }
   50%       { transform: translateY(-6px); }
 }
 
-.hero__card {
-  /* existing styles ... */
-  text-decoration: none;
-  color: var(--color-text);
-  cursor: pointer;
-}
-
 /* ── Stats Bar ─────────────────────────────────────────────────────────────── */
 .stats-bar {
   background: var(--color-bg-card);

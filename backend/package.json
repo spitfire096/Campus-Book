@@ -1,7 +1,7 @@
 {
-  "name": "smart-campus-resource-booking",
+  "name": "smart-campus-backend",
   "version": "1.0.0",
-  "description": "Smart Campus Resource Booking System — Algonquin College",
+  "description": "Smart Campus Resource Booking — Express/Mongoose backend",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -10,11 +10,10 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "connect-flash": "^0.1.1",
-    "dotenv": "^16.6.1",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
-    "mongodb": "^7.1.1",
-    "mongoose": "^8.23.0",
+    "mongoose": "^8.0.3",
     "pug": "^3.0.2"
   },
   "devDependencies": {

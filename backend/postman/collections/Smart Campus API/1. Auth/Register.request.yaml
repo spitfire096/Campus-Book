@@ -1,0 +1,31 @@
+$kind: http-request
+name: Register
+method: POST
+url: "{{baseUrl}}/auth/register?room=meeting"
+queryParams:
+  room: meeting
+order: 1000
+headers:
+  Content-Type: application/x-www-form-urlencoded
+body:
+  type: urlencoded
+  content:
+    name: Test Student
+    email: "{{userEmail}}"
+    password: "{{userPassword}}"
+    confirmPassword: "{{userPassword}}"
+    studentId: STU001
+description: Register a new student account. Uses userEmail and userPassword
+  from environment.
+scripts:
+  - type: afterResponse
+    code: |-
+      // Test that registration was successful (redirects to /dashboard)
+      pm.test("Registration successful - redirected to dashboard", function () {
+        pm.expect(pm.response.code).to.be.oneOf([200, 302]);
+      });
+
+      pm.test("Response time is acceptable", function () {
+        pm.expect(pm.response.responseTime).to.be.below(2000);
+      });
+    language: text/javascript
