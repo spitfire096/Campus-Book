@@ -1,0 +1,23 @@
+$kind: collection
+name: Smart Campus API
+description: >-
+  A complete collection for testing the Smart Campus Resource Booking backend.
+
+
+  This Express/Mongoose app runs on http://localhost:3000 and uses session-based
+  authentication.
+
+
+  ## Getting Started
+
+  1. Make sure your backend is running: `npm run dev`
+
+  2. Select the "Smart Campus - Local" environment
+
+  3. Run the Auth requests first to establish a session
+
+  4. Then explore Resources and Bookings
+variables:
+  baseUrl: ""
+auth:
+  type: noauth

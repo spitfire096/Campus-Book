@@ -1,1 +1,21 @@
+# Ignore parent folders (IMPORTANT for your issue)
+
+
+# Node
+node_modules/
+
+# Env
 .env
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Vagrant / VM
+.vagrant/
+
+# Backup
+backup/

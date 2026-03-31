@@ -1,0 +1,97 @@
+$kind: http-request
+method: GET
+url: "{{baseUrl}}/resources"
+examples: .resources/Get All Resources.resources/examples
+order: 1000
+description: Fetches all campus resources and visualizes the breakdown by
+  category (room, lab, equipment, study-space).
+scripts:
+  - type: afterResponse
+    code: |-
+      var body = pm.response.text();
+
+      // Count occurrences of each category in the HTML response
+      var categories = ['room', 'lab', 'equipment', 'study-space'];
+      var labels = ['Room', 'Lab', 'Equipment', 'Study Space'];
+      var counts = categories.map(function(cat) {
+          var regex = new RegExp('data-category=["\']' + cat + '["\']', 'gi');
+          var matches = body.match(regex);
+          if (!matches) {
+              // fallback: count category badge/tag text occurrences
+              var fallback = new RegExp('>' + cat + '<', 'gi');
+              matches = body.match(fallback);
+          }
+          return matches ? matches.length : 0;
+      });
+
+      // If all counts are 0, try a broader match
+      var total = counts.reduce(function(a, b) { return a + b; }, 0);
+      if (total === 0) {
+          counts = categories.map(function(cat) {
+              var regex = new RegExp(cat, 'gi');
+              var matches = body.match(regex);
+              return matches ? matches.length : 0;
+          });
+      }
+
+      var template = `
+      <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; padding: 20px; }
+        h2 { color: #2c3e50; text-align: center; margin-bottom: 4px; }
+        p.subtitle { text-align: center; color: #7f8c8d; margin-bottom: 20px; font-size: 13px; }
+        .container { display: flex; flex-direction: column; align-items: center; }
+        canvas { max-width: 380px; }
+        table { margin-top: 24px; border-collapse: collapse; width: 340px; }
+        th { background: #2c3e50; color: white; padding: 8px 16px; text-align: left; font-size: 13px; }
+        td { padding: 8px 16px; border-bottom: 1px solid #dee2e6; font-size: 13px; color: #34495e; }
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) td { background: #f2f2f2; }
+        .total-row td { font-weight: bold; background: #ecf0f1; }
+      </style>
+      <div class="container">
+        <h2>📊 Campus Resources by Category</h2>
+        <p class="subtitle">Smart Campus — Resource Distribution</p>
+        <canvas id="resourceChart"></canvas>
+        <table>
+          <thead><tr><th>Category</th><th>Count</th></tr></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+      <script>
+        pm.getData(function(err, value) {
+          var labels = value.labels;
+          var counts = value.counts;
+          var total = counts.reduce(function(a, b) { return a + b; }, 0);
+
+          var ctx = document.getElementById('resourceChart').getContext('2d');
+          new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels: labels,
+              datasets: [{
+                data: counts,
+                backgroundColor: ['#3498db', '#2ecc71', '#e67e22', '#9b59b6'],
+                borderColor: '#fff',
+                borderWidth: 2
+              }]
+            },
+            options: {
+              legend: { position: 'bottom' },
+              title: { display: false },
+              cutoutPercentage: 60
+            }
+          });
+
+          var tbody = document.getElementById('tableBody');
+          labels.forEach(function(label, i) {
+            var row = '<tr><td>' + label + '</td><td>' + counts[i] + '</td></tr>';
+            tbody.innerHTML += row;
+          });
+          tbody.innerHTML += '<tr class="total-row"><td>Total</td><td>' + total + '</td></tr>';
+        });
+      </script>
+      `;
+
+      pm.visualizer.set(template, { labels: labels, counts: counts });
+    language: text/javascript

@@ -22,16 +22,18 @@ block content
           a.btn.btn--primary(href="/auth/register") Get Started Free
           a.btn.btn--outline(href="/auth/login") Sign In
 
-    .hero__cards
-      a.hero__card(href="/resources?category=room")
-        span.hero__card-icon 🏫
-        span Room 204
-      a.hero__card.hero__card--active(href="/resources?category=lab")
-        span.hero__card-icon 🔬
-        span Lab A
-      a.hero__card(href="/resources?category=lab")
-        span.hero__card-icon 💻
-        span Mac Lab
+    .hero__visual
+      .hero__cards
+        .hero__card
+          span.hero__card-icon 🏫
+          span Room 204
+        .hero__card.hero__card--active
+          span.hero__card-icon 🔬
+          span Lab A
+        .hero__card
+          span.hero__card-icon 💻
+          span Mac Lab
+
   //- Stats Bar
   section.stats-bar
     .stats-bar__inner
