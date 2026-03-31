@@ -33,7 +33,7 @@ block content
             input.form-input#date(
               type="date",
               name="date",
-              id="date",
+              
               value= formData.date || booking.date.toISOString().split('T')[0],
               min= new Date().toISOString().split('T')[0]
             )
